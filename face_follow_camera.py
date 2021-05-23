@@ -1,18 +1,32 @@
 import cv2
+import numpy as np
 
 def detect_features(img):
-    frontal_face = frontal_face_cascade.detectMultiScale(img, 1.1, 4)
-    profile_face = profile_face_cascade.detectMultiScale(img, 1.1, 4)
+    img_cp = np.copy(img)
+
+    # Convert to grayscale
+    gray = cv2.cvtColor(img_cp, cv2.COLOR_BGR2GRAY)
+    # Detect the faces
+    frontal_face = frontal_face_cascade.detectMultiScale(gray, 1.1, 4)
+    profile_face = profile_face_cascade.detectMultiScale(gray, 1.1, 4)
+
+    face_coords = (0,0,0,0)
+    print(frontal_face)
 
     # Draw the rectangle around each face
     for (x, y, w, h) in frontal_face:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (255, 0, 0), 2)
-
+        cv2.rectangle(img_cp, (x, y), (x+w, y+h), (255, 0, 0), 2)
     # Draw the rectangle around each profile_face
     for (x, y, w, h) in profile_face:
-        cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        cv2.rectangle(img_cp, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    # Show image with face detection
+    cv2.imshow('face detection', img_cp)
     
-    return img
+    return face_coords
+
+def create_roi(img, face_coords):
+    roi = img
+    return roi
 
 def main():
     # Load the cascade
@@ -23,11 +37,10 @@ def main():
     while True:
         # Read the frame
         _, img = cap.read()
-        # Convert to grayscale
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # Detect the faces
 
-        img = detect_features(img)
+        face_coords = detect_features(img)
+
+        roi = create_roi(img, face_coords)
 
         # Display
         cv2.imshow('img', img)
