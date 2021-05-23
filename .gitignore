@@ -130,3 +130,7 @@ dmypy.json
 
 #vscode
 .vscode/
+
+#test
+test.py
+test.ipynb
